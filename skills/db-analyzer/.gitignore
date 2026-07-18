@@ -1,0 +1,5 @@
+config/environments.yaml
+dist/config/environments.yaml
+node_modules/
+last-query-result.txt
+dist/last-query-result.txt

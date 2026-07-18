@@ -1,0 +1,21 @@
+{
+  "name": "db-analyzer",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "mysql2": "^3.11.0",
+    "oracledb": "^6.6.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "vitest": "^4.1.10"
+  }
+}
