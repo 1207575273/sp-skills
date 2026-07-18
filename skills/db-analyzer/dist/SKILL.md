@@ -74,11 +74,6 @@ node scripts/run-query.bundle.mjs --env <env> --sql "SELECT query, exec_count, a
 - **SQLite 特点**:配置只有 `type` + `path`(无 host/账号密码);`--introspect schemas` 对它无意义,会返回一句提示而非报错。
 - **PostgreSQL 的 ddl** 是从系统表拼的「尽力还原」文本,看结构够用,不保证跟 `pg_dump` 逐字一致。
 
-## 使用前提(生产单文件版)
-
-1. 复制 `config/environments.example.yaml` 为同目录 `config/environments.yaml`,按 `type: mysql|postgres|oracle|sqlite` 填连接信息;也可用 `--config <路径>` 或环境变量 `DB_ANALYZER_CONFIG` 指向别处的配置。真实配置不入库。
-2. 需要 Node >= 22.5(为了内置 `node:sqlite`;不查 SQLite 的话 >= 18 也行)。**无需 npm install**——驱动已全部打包进单文件。
-
 ## 环境没配 / 用户要的连接不在清单
 
-照 `config/environments.example.yaml` 在 `config/environments.yaml` 加一段即可,改完立即生效(每次运行都重读配置,无需 reload)。
+配置在本 skill 目录的 `config/environments.yaml`——照 `config/environments.example.yaml` 加一段、按 `type: mysql|postgres|oracle|sqlite` 填即可;也可用 `--config <路径>` 或环境变量 `DB_ANALYZER_CONFIG` 指向别处。改完立即生效(每次运行都重读配置,无需 reload)。运行环境要求(Node 版本等)见 README。

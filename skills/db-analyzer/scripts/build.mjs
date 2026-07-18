@@ -18,18 +18,14 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const DIST = join(ROOT, "dist");
 
-// 生产版 SKILL.md 与源码版只差两处:命令入口、以及"前提"那两节(源码要 npm install/迁移,
-// 生产版单文件免安装)。其余 SOP/红线/性能分析等原样保留,靠文本替换从源码 SKILL.md 生成,
-// 避免维护两份内容漂移。
-const PROD_PREREQ = `## 使用前提(生产单文件版)
-
-1. 复制 \`config/environments.example.yaml\` 为同目录 \`config/environments.yaml\`,按 \`type: mysql|postgres|oracle|sqlite\` 填连接信息;也可用 \`--config <路径>\` 或环境变量 \`DB_ANALYZER_CONFIG\` 指向别处的配置。真实配置不入库。
-2. 需要 Node >= 22.5(为了内置 \`node:sqlite\`;不查 SQLite 的话 >= 18 也行)。**无需 npm install**——驱动已全部打包进单文件。
-`;
-
+// 生产版 SKILL.md 由源码 SKILL.md 文本转换而来(避免维护两份漂移),三处不同:
+//   1. 命令入口 scripts/run-query.mjs -> 打包单文件 scripts/run-query.bundle.mjs;
+//   2. 删掉"首次使用/迁移"整节——部署前提是给人看的、README 已有,不塞进给 Agent 的 SKILL.md;
+//   3. 末节"环境没配"精简成只留 Agent 用得上的配置定位与 --config/DB_ANALYZER_CONFIG 覆盖。
+// 其余 SOP/红线/性能分析原样保留。
 const PROD_ENVMISSING = `## 环境没配 / 用户要的连接不在清单
 
-照 \`config/environments.example.yaml\` 在 \`config/environments.yaml\` 加一段即可,改完立即生效(每次运行都重读配置,无需 reload)。
+配置在本 skill 目录的 \`config/environments.yaml\`——照 \`config/environments.example.yaml\` 加一段、按 \`type: mysql|postgres|oracle|sqlite\` 填即可;也可用 \`--config <路径>\` 或环境变量 \`DB_ANALYZER_CONFIG\` 指向别处。改完立即生效(每次运行都重读配置,无需 reload)。运行环境要求(Node 版本等)见 README。
 `;
 
 const DIST_README = `# db-analyzer(生产打包版)
@@ -51,8 +47,9 @@ function toProductionSkill(source) {
   let md = source;
   // 命令入口:源码脚本 -> 打包单文件(migrate 脚本那处路径名不同,不会被误伤)。
   md = md.replaceAll("scripts/run-query.mjs", "scripts/run-query.bundle.mjs");
-  // "首次使用/迁移"整节 -> 生产前提(匹配到下一个 ## 之前)。
-  md = md.replace(/## 首次使用 \/ 迁移到新工程后[\s\S]*?(?=\n## )/, PROD_PREREQ);
+  // 删掉"首次使用/迁移"整节(连它前面那个空行一起删,避免留多余空行):
+  // 部署前提是给人看的、README 已有,不塞进给 Agent 的 SKILL.md。
+  md = md.replace(/\n## 首次使用 \/ 迁移到新工程后[\s\S]*?(?=\n## )/, "");
   // 最后一节"环境没配"(源码版讲迁移脚本)-> 生产版精简(匹配到文件末尾)。
   md = md.replace(/## 环境没配 \/ 用户要的连接不在清单[\s\S]*$/, PROD_ENVMISSING);
   return md;
