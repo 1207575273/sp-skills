@@ -159,10 +159,22 @@ async function withConnection(adapter, env, envName, wrapWorkError, work) {
 
 // 用适配器返回的 kind 显式渲染,不靠猜返回值形状(kind: "text" 直接打印原文,
 // kind: "table" 走表格;0 行给出更有针对性的提示,而不是表格的 "(0 行,无结果)")。
-function formatIntrospectResult(result, envName, opts) {
+// introspect 不在 SQL 里套 LIMIT(要能报准总数),所以在渲染层兜底:结果超过 limit 就只渲染
+// 前 limit 行并报总数——防几千张表的库把全量元数据灌进 Agent 上下文(查询走 runQuery 有自己的截断,
+// 这条路径原先没有)。
+export function formatIntrospectResult(result, envName, opts, limit = DEFAULT_LIMIT) {
   if (result.kind === "text") return result.content;
   if (result.rows.length === 0) {
     return `(未探查到结果,检查 env/schema/table 名是否正确:${JSON.stringify({ env: envName, ...opts })})`;
+  }
+  const total = result.rows.length;
+  if (total > limit) {
+    const shown = { columns: result.columns, rows: result.rows.slice(0, limit) };
+    return (
+      formatTable(shown) +
+      `\n\n(共 ${total} 行,只显示前 ${limit};对象太多时别整列——用带 LIKE 的 --sql 按名字过滤,` +
+      `或已知表名就直接 --introspect columns/ddl --table <表>;确要更多可调大 --limit)`
+    );
   }
   return formatTable(result);
 }
@@ -179,10 +191,11 @@ async function runIntrospect(envName, env, args) {
   const adapter = pickAdapter(env.type);
   const kind = args.introspect;
   const opts = { schema: args.schema, table: args.table };
+  const limit = args.limit ? Number(args.limit) : DEFAULT_LIMIT;
   await withConnection(adapter, env, envName, (err) => wrapIntrospectError(err, envName, opts), async (conn) => {
     trace("探查结构", { kind, ...opts });
     const result = await adapter.introspect(conn, kind, opts);
-    emit(formatIntrospectResult(result, envName, opts));
+    emit(formatIntrospectResult(result, envName, opts, limit));
   });
 }
 

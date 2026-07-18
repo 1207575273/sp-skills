@@ -24,13 +24,14 @@ node scripts/run-query.bundle.mjs --list-envs
 ### 步骤 2 - 不确定表结构,先探查(别猜字段名)
 
 ```
-node scripts/run-query.bundle.mjs --env <env> --introspect tables                 列出所有表
+node scripts/run-query.bundle.mjs --env <env> --introspect tables                 列出表(默认最多 200)
 node scripts/run-query.bundle.mjs --env <env> --introspect columns --table <表>   列字段 + 类型
 node scripts/run-query.bundle.mjs --env <env> --introspect ddl --table <表>       看完整建表语句(首选)
 ```
 
 - `ddl` 首选:类型、约束、索引都在一起,比只看 columns 更快摸清结构。
 - 参数不齐时(如 Oracle/MySQL 需要 `--schema`)工具会明确报错说缺哪个,照提示补即可,不用背方言差异。
+- 库表很多时(几千张):`tables` 默认只列前 200 并报总数,别指望整列看完;改用带 `LIKE` 的 `--sql` 按表名过滤,或已知表名就直接查它的 `columns`/`ddl`。
 
 ### 步骤 3 - 跑只读查询
 

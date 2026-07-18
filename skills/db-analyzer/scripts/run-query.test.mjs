@@ -8,6 +8,7 @@ import {
   resolveConfigPath,
   pickAdapter,
   formatTable,
+  formatIntrospectResult,
   wrapConnectionError,
   wrapQueryError,
   wrapIntrospectError,
@@ -99,6 +100,33 @@ describe("formatTable", () => {
   it("空结果给出明确提示而不是空字符串", () => {
     const text = formatTable({ columns: ["id"], rows: [] });
     expect(text).toMatch(/0 行|无结果/);
+  });
+});
+
+describe("formatIntrospectResult", () => {
+  it("行数不超过 limit 时原样渲染,不加截断提示", () => {
+    const result = { kind: "table", columns: ["table_name"], rows: [["orders"], ["users"]] };
+    const text = formatIntrospectResult(result, "mkdev01-mysql", {}, 200);
+    expect(text).toContain("orders");
+    expect(text).toContain("users");
+    expect(text).not.toMatch(/只显示前/);
+  });
+
+  it("行数超过 limit 时只渲染前 N 行并报总数", () => {
+    const rows = Array.from({ length: 3000 }, (_, i) => [`t_${i}`]);
+    const result = { kind: "table", columns: ["table_name"], rows };
+    const text = formatIntrospectResult(result, "mkdev01-mysql", { schema: "biz" }, 200);
+    expect(text).toContain("t_0");
+    expect(text).toContain("t_199"); // 第 200 行(索引 199)在
+    expect(text).not.toContain("t_200"); // 第 201 行(索引 200)被截掉
+    expect(text).toMatch(/共 3000 行/);
+    expect(text).toMatch(/只显示前 200/);
+  });
+
+  it("text 类结果(ddl)原样返回,不受 limit 影响", () => {
+    const result = { kind: "text", content: "CREATE TABLE orders (...)" };
+    const text = formatIntrospectResult(result, "mkdev01-mysql", { table: "orders" }, 200);
+    expect(text).toBe("CREATE TABLE orders (...)");
   });
 });
 

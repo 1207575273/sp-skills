@@ -52664,10 +52664,17 @@ async function withConnection(adapter, env, envName, wrapWorkError, work) {
     await adapter.close(conn);
   }
 }
-function formatIntrospectResult(result, envName, opts) {
+function formatIntrospectResult(result, envName, opts, limit = DEFAULT_LIMIT) {
   if (result.kind === "text") return result.content;
   if (result.rows.length === 0) {
     return `(\u672A\u63A2\u67E5\u5230\u7ED3\u679C,\u68C0\u67E5 env/schema/table \u540D\u662F\u5426\u6B63\u786E:${JSON.stringify({ env: envName, ...opts })})`;
+  }
+  const total = result.rows.length;
+  if (total > limit) {
+    const shown = { columns: result.columns, rows: result.rows.slice(0, limit) };
+    return formatTable(shown) + `
+
+(\u5171 ${total} \u884C,\u53EA\u663E\u793A\u524D ${limit};\u5BF9\u8C61\u592A\u591A\u65F6\u522B\u6574\u5217\u2014\u2014\u7528\u5E26 LIKE \u7684 --sql \u6309\u540D\u5B57\u8FC7\u6EE4,\u6216\u5DF2\u77E5\u8868\u540D\u5C31\u76F4\u63A5 --introspect columns/ddl --table <\u8868>;\u786E\u8981\u66F4\u591A\u53EF\u8C03\u5927 --limit)`;
   }
   return formatTable(result);
 }
@@ -52682,10 +52689,11 @@ async function runIntrospect(envName, env, args) {
   const adapter = pickAdapter(env.type);
   const kind = args.introspect;
   const opts = { schema: args.schema, table: args.table };
+  const limit = args.limit ? Number(args.limit) : DEFAULT_LIMIT;
   await withConnection(adapter, env, envName, (err) => wrapIntrospectError(err, envName, opts), async (conn) => {
     trace("\u63A2\u67E5\u7ED3\u6784", { kind, ...opts });
     const result = await adapter.introspect(conn, kind, opts);
-    emit(formatIntrospectResult(result, envName, opts));
+    emit(formatIntrospectResult(result, envName, opts, limit));
   });
 }
 async function runSql(envName, env, sql, args) {
@@ -52749,6 +52757,7 @@ if (isMain) {
   });
 }
 export {
+  formatIntrospectResult,
   formatTable,
   loadConfig,
   parseArgs,
