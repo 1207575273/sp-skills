@@ -33,8 +33,9 @@ const RULES = [
     id: "internal-host",
     desc: "内网域名",
     re: /\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:landray\.com\.cn|local|internal|intranet)\b/gi,
-    // com.landray.* 是 Java 包名(反编译即可见),landray.log 是日志文件名,都不是地址
-    allow: (line) => /com\.landray\.|landray\.log/.test(line),
+    // com.landray.* 是 Java 包名(反编译即可见),landray.log 是日志文件名,都不是地址;
+    // xxx.internal / <域名>.internal 之流是文档里的占位符
+    allow: (line) => /com\.landray\.|landray\.log|\b(?:xxx|yyy|example|host)\.|<[^>]+>\./.test(line),
   },
   {
     id: "credential-value",
