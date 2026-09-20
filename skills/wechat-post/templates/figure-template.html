@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!-- 正文插图模板:宽 1200,高随内容。标题+副题+卡片网格,按需增删卡片 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #FAFBFF; color: #1D2340; padding: 48px 56px 40px;
+  }
+  .head { font-size: 30px; font-weight: 700; margin-bottom: 6px; }
+  .caption { font-size: 17px; color: #7A81A8; margin-bottom: 34px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { background: #FFFFFF; border: 1px solid #E4E7F5; border-radius: 14px; padding: 24px 26px 20px; }
+  .card h3 { font-size: 19px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; background: #4F46E5; flex: none; }
+  .items { display: flex; flex-wrap: wrap; gap: 10px; }
+  .item { font-size: 16px; background: #F3F5FC; border-radius: 8px; padding: 8px 14px; line-height: 1.4; }
+  .item b { font-weight: 700; }
+  .item small { display: block; font-size: 13px; color: #8A90B5; margin-top: 2px; }
+  .bar {
+    margin-top: 22px; background: #14183A; color: #D9DDF5; border-radius: 12px;
+    padding: 16px 24px; font-size: 16px; letter-spacing: 1px; text-align: center;
+  }
+  .bar b { color: #A5B0FF; }
+</style>
+</head>
+<body>
+  <div class="head">[图标题]</div>
+  <div class="caption">[一句副题]</div>
+  <div class="grid">
+    <div class="card">
+      <h3><span class="swatch"></span>[分组一]</h3>
+      <div class="items">
+        <div class="item"><b>[条目]</b><small>[补充说明]</small></div>
+        <div class="item"><b>[条目]</b><small>[补充说明]</small></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="swatch" style="background:#0EA5A4"></span>[分组二]</h3>
+      <div class="items">
+        <div class="item"><b>[条目]</b><small>[补充说明]</small></div>
+      </div>
+    </div>
+  </div>
+  <div class="bar">[一句结论,箭头用 -> ]</div>
+</body>
+</html>

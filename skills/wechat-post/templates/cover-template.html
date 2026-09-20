@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- 封面模板 1800x766(公众号 2.35:1 二倍)。替换 [占位] 文案,色系可整体换 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1800px; height: 766px; overflow: hidden; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #0E1230;
+    position: relative;
+    color: #FFFFFF;
+  }
+  .glow {
+    position: absolute; right: -200px; top: -260px;
+    width: 900px; height: 900px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,70,229,0.35) 0%, rgba(14,18,48,0) 65%);
+  }
+  .grid-lines {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 90px 90px;
+  }
+  .wrap { position: relative; padding: 90px 110px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+  .kicker { font-size: 34px; letter-spacing: 14px; color: #8B93C7; }
+  .title { font-size: 118px; font-weight: 700; line-height: 1.25; letter-spacing: 4px; }
+  .title .accent { color: #7C8CFF; }
+  .sub { font-size: 40px; color: #B9BFE3; letter-spacing: 6px; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="grid-lines"></div>
+  <div class="wrap">
+    <div class="kicker">[栏目名 · 文章类型]</div>
+    <div class="title">[主标题上行]<br>[主标题下行] <span class="accent">[强调词]</span></div>
+    <div class="sub">[一行副题]</div>
+  </div>
+</body>
+</html>

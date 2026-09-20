@@ -1,0 +1,6 @@
+{
+  "name": "cn-hotspot",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" }
+}

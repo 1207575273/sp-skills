@@ -1,0 +1,8 @@
+# 浏览器登录态,绝不入库
+.profile/
+
+# 发文运行日志
+publish-logs/
+
+# 依赖
+node_modules/

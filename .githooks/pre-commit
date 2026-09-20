@@ -1,0 +1,4 @@
+#!/bin/sh
+# 本仓面向公开:每次提交前扫暂存区,命中凭证特征即拦下。
+# 启用方式(clone 后跑一次): git config core.hooksPath .githooks
+exec node scripts/audit-secrets.mjs --staged

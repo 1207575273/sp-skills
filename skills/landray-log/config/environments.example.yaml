@@ -1,0 +1,13 @@
+# 环境配置模板 —— 复制成同目录 environments.yaml,按自己有权限的环境填。
+# 认证二选一(有 encryptedPassword 优先):
+#   A. encryptedPassword:抓一次登录请求(devtools -> 登录那发 POST /data/sys-auth/login -> j_password 的值,
+#      URL 解码后 %2F->/  %2B->+  %3D->=),填这里并用引号包住。脚本回放它自动登录,token 不过期。
+#   B. token:直接填当前有效的 x-auth-token 兜底(会过期)。
+
+<环境名,如 mkdev01>:
+  baseUrl: https://<环境域名>
+  username: <管理员账号,如 sysadmin>
+  loginPath: /data/sys-auth/login
+  encryptedPassword: "<抓包 j_password 密文,URL 解码后>"
+  # 或改用 token 兜底(与 encryptedPassword 二选一):
+  # token: <当前有效的 x-auth-token>

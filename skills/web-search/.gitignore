@@ -1,0 +1,5 @@
+# 真实秘钥,不入库(推 GitHub 会暴露)。各自复制 secrets.example.yaml 填。
+config/secrets.yaml
+
+# 依赖(如后续引入)
+node_modules/

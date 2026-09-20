@@ -1,0 +1,9 @@
+# 真实登录密文,不入库(推 GitHub 会暴露内网管理员登录)。各自复制 environments.example.yaml 填。
+config/environments.yaml
+
+# 运行产物
+last-logs.log
+last-response.html
+
+# 依赖(如后续引入)
+node_modules/
