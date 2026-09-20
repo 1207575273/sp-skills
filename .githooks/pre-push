@@ -1,0 +1,4 @@
+#!/bin/sh
+# pre-commit 只扫暂存区,漏得掉存量已提交文件。推送前再全量扫一次已跟踪文件,
+# 这是内容真正离开本机前的最后一道闸。
+exec node scripts/audit-secrets.mjs

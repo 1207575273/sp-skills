@@ -47,7 +47,13 @@ const RULES = [
     id: "private-key",
     desc: "私钥块",
     re: /-----BEGIN (?:RSA |OPENSSH |EC |DSA |PGP )?PRIVATE KEY-----/g,
-    allow: () => false,
+    // 光有 BEGIN 标记说明不了什么:数据库驱动等库会把它当格式常量写进代码
+    // (如 db-analyzer 的 dist bundle)。真私钥的形状是标记行后面紧跟长 base64
+    // 数据行 —— 以此区分,而不是见到标记就拦。
+    verify: (lines, i) => {
+      const next = (lines[i + 1] ?? "").trim().replace(/^["'`]|["'`],?$/g, "");
+      return /^[A-Za-z0-9+/=]{32,}$/.test(next);
+    },
   },
   {
     id: "real-config-file",
@@ -95,6 +101,8 @@ async function scanFile(relPath) {
       rule.re.lastIndex = 0;
       if (!rule.re.test(line)) return;
       if (rule.allow?.(line)) return;
+      // verify 存在时,只有它确认"这确实是真凭证的形状"才算命中
+      if (rule.verify && !rule.verify(lines, i)) return;
       hits.push({ rule, line: i + 1, text: line.trim().slice(0, 120) });
     });
   }
