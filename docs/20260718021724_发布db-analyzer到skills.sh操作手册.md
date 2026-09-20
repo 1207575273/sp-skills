@@ -19,7 +19,7 @@ SKILL.md 只要有合法 frontmatter(`name` 小写连字符 + `description`)就�
 **绝对不能直接把 `landray_work_e` 设成公开仓库。** 原因:git 历史里有真实内网管理员凭证——
 
 - `skills/landray-log/config/environments.yaml`(以及 `.claude/` 那份)是**被 git 跟踪的**,含 mkdev01 / mksmoke / sp4smoke 的真实 `encryptedPassword`(你的工具本身证明了这些密文能重放登录 = 等于活凭证);
-- 内网域名(各环境真实域名,此处不复述);
+- 内网域名 `mkdev01.ywork.me`、`sp4smoke-inner.landray.com.cn` 等;
 - 这些在提交 `e9259a5` / `aeead91` / `8b7fa62` 的历史里,**删文件也没用,历史仍在**。
 
 所以正确做法:**另开一个只含 db-analyzer 的干净仓库**。好消息:db-analyzer 本身干净——它的真实配置一直被 gitignore,只有 `environments.example.yaml` 模板入库,无任何凭证。

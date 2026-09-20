@@ -64,6 +64,19 @@ const RULES = [
   },
 ];
 
+/**
+ * 文件级豁免:路径 -> { rules, reason }。只放行列出的规则,该文件其余规则照常生效。
+ * 每条必须写明理由和拍板时间 —— 不写理由的豁免就是下一个漏洞。
+ */
+const FILE_ALLOWLIST = {
+  "docs/20260718021724_发布db-analyzer到skills.sh操作手册.md": {
+    rules: ["internal-host"],
+    reason:
+      "2026-09-20 用户明确要求不脱敏:文中真实内网域名是决策沿革的一部分。" +
+      "该文件不含凭证,只含域名;其余规则(凭证赋值、私钥、私网 IP)仍对它生效。",
+  },
+};
+
 const BINARY_EXT = new Set([
   ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".svg",
   ".zip", ".gz", ".pdf", ".woff", ".woff2", ".ttf",
@@ -79,8 +92,10 @@ function listFiles() {
 
 async function scanFile(relPath) {
   const hits = [];
+  const exempt = new Set(FILE_ALLOWLIST[relPath]?.rules ?? []);
 
   for (const rule of RULES) {
+    if (exempt.has(rule.id)) continue;
     if (rule.pathRe?.test(relPath)) {
       hits.push({ rule, line: 0, text: relPath });
     }
@@ -97,7 +112,7 @@ async function scanFile(relPath) {
 
   const lines = content.split(/\r?\n/);
   for (const rule of RULES) {
-    if (!rule.re) continue;
+    if (!rule.re || exempt.has(rule.id)) continue;
     lines.forEach((line, i) => {
       rule.re.lastIndex = 0;
       if (!rule.re.test(line)) return;
